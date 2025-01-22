@@ -1,0 +1,87 @@
+﻿@model IEnumerable<ContactManagerApp.Models.Contact>
+
+@{
+    ViewData["Title"] = "Contact Manager";
+}
+
+<h1>Contact Manager</h1>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-warning">
+        <ul>
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
+    </div>
+}
+<form class="mb-4 p-3 border rounded" action="/Contacts/UploadCsv" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="csvFile" class="form-label">Select a csv file</label>
+        <input type="file" name="csvFile" accept=".csv" class="form-control" />
+    </div>
+    <div class="form-group mt-3">
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>
+<table class="table" id="contactsTable">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+                <span id="sortIndicator" style="cursor: pointer;" onclick="toggleSortByName()">▲</span>
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DateOfBbirth)
+                <span id="sortIndicator" style="cursor: pointer;" onclick="toggleSortByDateOfBirth()">▲</span>
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Married)
+                <input type="checkbox" id="filterMarried" style="margin-left: 10px;" onchange="toggleFilterMarried()" />
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Phone)
+            </th>
+            <th>
+                <span id="sortIndicator" style="cursor: pointer;" onclick="toggleSortBySalary()">▲</span>
+                @Html.DisplayNameFor(model => model.Salary)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.DateOfBbirth)</td>
+                <td><input type="checkbox" disabled @(item.Married ? "checked" : "") /></td>
+                <td>@Html.DisplayFor(modelItem => item.Phone)</td>
+                <td>@Html.DisplayFor(modelItem => item.Salary)</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> | 
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                 
+                    
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@* *@
